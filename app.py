@@ -6,6 +6,7 @@ app = Flask(__name__)
 # --- Configuración de MySQL ---
 # Recuerda reemplazar estos valores con tus credenciales y detalles de conexión reales.
 app.config['MYSQL_HOST'] = '34.70.133.119'  # O la IP de tu servidor MySQL
+app.config['MYSQL_HOST'] = '10.124.80.4'  # O la IP de tu servidor MySQL
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'c0nv0c4t0r14s.S4p'
 app.config['MYSQL_DB'] = 'convocatoria_sapiencia'
@@ -71,7 +72,7 @@ def buscar_por_documento():
                 cur = mysql.connection.cursor()
                 # Ajusta los campos que quieres seleccionar
                 query = """
-                    SELECT primerNombre, primerApellido, documento, rol 
+                    SELECT primerNombre, primerApellido, documento,correo, rol 
                     FROM convocatoria_sapiencia.login_usuario 
                     WHERE documento = %s
                 """
@@ -104,30 +105,31 @@ def editar_rol():
     if request.method == 'POST':
         documento_a_editar = request.form.get('documento_a_editar')
         nuevo_rol = request.form.get('nuevo_rol')
+        nuevo_correo = request.form.get('nuevo_correo')
 
-        if not documento_a_editar or not nuevo_rol:
-            flash('Faltan datos para actualizar el rol (documento o nuevo rol).', 'error')
+        if not documento_a_editar or not nuevo_rol or not nuevo_correo:
+            flash('Faltan datos para actualizar (documento, nuevo rol o nuevo correo).', 'error')
             return redirect(url_for('buscar_por_documento'))
 
         try:
             cur = mysql.connection.cursor()
             query = """
                 UPDATE convocatoria_sapiencia.login_usuario
-                SET rol = %s
+                SET rol = %s, correo = %s
                 WHERE documento = %s
             """
-            cur.execute(query, (nuevo_rol, documento_a_editar))
+            cur.execute(query, (nuevo_rol, nuevo_correo, documento_a_editar))
             mysql.connection.commit()
             
             if cur.rowcount > 0:
-                flash(f'Rol actualizado correctamente para el documento {documento_a_editar}.', 'success')
+                flash(f'Datos actualizados correctamente para el documento {documento_a_editar}.', 'success')
             else:
-                flash(f'No se encontró el documento {documento_a_editar} para actualizar o el rol ya era el mismo.', 'warning')
+                flash(f'No se encontró el documento {documento_a_editar} para actualizar o los datos ya eran los mismos.', 'warning')
             cur.close()
         except Exception as e:
             mysql.connection.rollback() # Importante hacer rollback en caso de error
-            print(f"Error al actualizar el rol: {e}")
-            flash('Ocurrió un error al actualizar el rol en la base de datos.', 'error')
+            print(f"Error al actualizar datos: {e}")
+            flash('Ocurrió un error al actualizar los datos en la base de datos.', 'error')
         
         return redirect(url_for('buscar_por_documento')) # Redirige de nuevo a la página de búsqueda
 

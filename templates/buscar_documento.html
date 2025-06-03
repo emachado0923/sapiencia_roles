@@ -1,98 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Usuario por Documento</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
-        label { display: block; margin-bottom: 8px; }
-        input[type="text"], input[type="number"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 4px; }
-        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        .results { margin-top: 20px; padding: 15px; border: 1px solid #eee; border-radius: 4px; background-color: #f9f9f9; }
-        .error { color: red; }
-        .no-results { color: orange; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px;}
-        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd;}
-        th { background-color: #f2f2f2; }
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .no-results {
+            color: orange;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
     <!-- Estilos básicos para mensajes flash -->
     <style>
-        .alert { padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; }
-        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
-        .alert-error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
-        .alert-warning { color: #856404; background-color: #fff3cd; border-color: #ffeeba; }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
 
         <h1>Buscar Usuario por Documento</h1>
         <form method="POST">
             <label for="documento">Número de Documento:</label>
-            <input type="number" id="documento" name="documento" required value="{{ request.form.documento if request.form.documento else '' }}">
+            <input type="number" id="documento" name="documento" required
+                value="{{ request.form.documento if request.form.documento else '' }}">
             <button type="submit">Buscar</button>
         </form>
 
         {% if error_message %}
-            <div class="results error">
-                <p>{{ error_message }}</p>
-            </div>
+        <div class="results error">
+            <p>{{ error_message }}</p>
+        </div>
         {% endif %}
 
         {% if usuario_encontrado %}
-                <div class="results">
-                    <h2>Resultado:</h2>
-                    <table>
-                        <tr>
-                            <th>Primer Nombre</th>
-                            <td>{{ usuario_encontrado.primerNombre }}</td>
-                        </tr>
-                        <tr>
-                            <th>Primer Apellido</th>
-                            <td>{{ usuario_encontrado.primerApellido }}</td>
-                        </tr>
-                        <tr>
-                            <th>Documento</th>
-                            <td>{{ usuario_encontrado.documento }}</td>
-                        </tr>
-                        <tr>
-                            <th>Rol</th>
-                            <td>{{ usuario_encontrado.rol }}</td>
-                            <!-- Podrías mostrar el rol actual aquí también o solo en el formulario de edición -->
-                        </tr>
-                        <!-- Puedes añadir más campos si los seleccionas en tu consulta -->
-                    </table>
+        <div class="results">
+            <h2>Resultado:</h2>
+            <table>
+                <tr>
+                    <th>Primer Nombre</th>
+                    <td>{{ usuario_encontrado.primerNombre }}</td>
+                </tr>
+                <tr>
+                    <th>Primer Apellido</th>
+                    <td>{{ usuario_encontrado.primerApellido }}</td>
+                </tr>
+                <tr>
+                    <th>Documento</th>
+                    <td>{{ usuario_encontrado.documento }}</td>
+                </tr>
+                <tr>
+                    <th>Correo</th>
+                    <td>{{ usuario_encontrado.correo }}</td>
+                </tr>
+                <tr>
+                    <th>Rol</th>
+                    <td>{{ usuario_encontrado.rol }}</td>
+                    <!-- Podrías mostrar el rol actual aquí también o solo en el formulario de edición -->
+                </tr>
+                <!-- Puedes añadir más campos si los seleccionas en tu consulta -->
+            </table>
 
-                    <hr style="margin: 20px 0;">
+            <hr style="margin: 20px 0;">
 
-                    <h3>Actualizar Rol para {{ usuario_encontrado.primerNombre }} (Doc: {{ usuario_encontrado.documento }})</h3>
-                    <form method="POST" action="{{ url_for('editar_rol') }}">
-                        {# Campo oculto para enviar el documento del usuario que se está editando #}
-                        <input type="hidden" name="documento_a_editar" value="{{ usuario_encontrado.documento }}">
-                        
-                        <div>
-                            <label for="nuevo_rol">Nuevo Rol:</label>
-                            <input type="text" id="nuevo_rol" name="nuevo_rol" value="{{ usuario_encontrado.rol }}" required>
-                        </div>
-                        <button type="submit">Guardar Nuevo Rol</button>
-                    </form>
+            <h3>Actualizar Rol para {{ usuario_encontrado.primerNombre }} (Doc: {{ usuario_encontrado.documento }})</h3>
+            <form method="POST" action="{{ url_for('editar_rol') }}">
+                {# Campo oculto para enviar el documento del usuario que se está editando #}
+                <input type="hidden" name="documento_a_editar" value="{{ usuario_encontrado.documento }}">
+
+                <div style="margin-bottom: 10px;">
+                    <label for="nuevo_correo">Nuevo Correo:</label>
+                    <input type="email" id="nuevo_correo" name="nuevo_correo" value="{{ usuario_encontrado.correo }}"
+                        >
                 </div>
-        {% elif request.method == 'POST' and not error_message %} 
-            {# Si fue un POST, no hubo error de búsqueda, pero no se encontró usuario #}
-                <div class="results no-results">
-                    <p>No se encontró ningún usuario con el documento proporcionado.</p>
+
+                <div style="margin-bottom: 10px;">
+                    <label for="nuevo_rol">Nuevo Rol:</label>
+                    <select id="nuevo_rol" name="nuevo_rol">
+                        <option value="">-- Seleccione un rol --</option>
+                        <option value="1" {% if usuario_encontrado.rol=="Administrador" %}selected{% endif
+                            %}>Administrador</option>
+                        <option value="2" {% if usuario_encontrado.rol=="Aspirante" %}selected{% endif %}>Aspirante
+                        </option>
+                        <option value="3" {% if usuario_encontrado.rol=="Validaciones" %}selected{% endif %}>Validaciones
+                        </option>
+                        <option value="4" {% if usuario_encontrado.rol=="Renovación" %}selected{% endif %}>
+                            Renovación</option>
+                        <option value="5" {% if usuario_encontrado.rol=="Mejores Bachilleres" %}selected{% endif %}>Mejores Bachilleres
+                        </option>
+                        <option value="6" {% if usuario_encontrado.rol=="Presellecionados" %}selected{% endif %}>Presellecionados
+                        </option>
+                        <option value="7" {% if usuario_encontrado.rol=="Taquillas" %}selected{% endif %}>Taquillas
+                        </option>
+                        <option value="8" {% if usuario_encontrado.rol=="Aspirante a convocatoria cerrada" %}selected{% endif %}>Aspirante a convocatoria cerrada
+                        </option>
+                        <option value="10" {% if usuario_encontrado.rol=="Talento Especializado" %}selected{% endif %}>Talento Especializado
+                        </option>
+                        <option value="11" {% if usuario_encontrado.rol=="Entidad Servicio Social" %}selected{% endif %}>Entidad Servicio Social
+                        </option>
+
+                        {# Add more options as needed #}
+                    </select>
                 </div>
+                <button type="submit">Guardar Cambios</button>
+            </form>
+        </div>
+        {% elif request.method == 'POST' and not error_message %}
+        {# Si fue un POST, no hubo error de búsqueda, pero no se encontró usuario #}
+        <div class="results no-results">
+            <p>No se encontró ningún usuario con el documento proporcionado.</p>
+        </div>
         {% endif %}
     </div>
 </body>
+
 </html>
