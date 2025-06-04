@@ -19,7 +19,7 @@ mysql = MySQL(app)
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World! Accede a /consultar_login para ver los datos de la tabla login.'
+    return 'Hello, World! Accede a /consultar_login para ver los datos de la tabla login.😊'
 
 @app.route('/consultar_login')
 def consultar_login():
